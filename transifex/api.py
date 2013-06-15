@@ -369,3 +369,23 @@ class TransifexAPI(object):
             raise TransifexAPIException(response)
    
         return json.loads(response.content)
+
+    def get_project_status(self, project_slug, language_code):
+        """
+        Check completion average of all resources in a project, per language.
+
+        @param project_slug
+           The project slug
+        @param resource_slug
+           The resource slug
+        @param language_code
+           The language code to check
+        """
+        if not project_exists(self, project_slug):
+            raise TransifexAPIException(project_slug)
+        resources = transobject.list_resources(project_slug)
+        matrix = {}
+        for resource in resources:
+            resource_slug = resource['slug']
+            matrix[resource_slug] = get_resource_status(project_slug, resource_slug, language_code)
+        return matrix
