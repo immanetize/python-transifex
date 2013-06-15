@@ -349,3 +349,23 @@ class TransifexAPI(object):
         response = requests.get(url, auth=self._auth)
         return response.status_code == requests.codes['OK']
         
+    def get_resource_status(self, project_slug, resource_slug, language_code):
+        """ 
+        Check the completion status of a given resource, per language.
+        
+        @param project_slug
+           The project slug
+        @param resource_slug
+           The resource slug
+        @param language_code
+           The language code to check
+        """
+        url = '%s/project/%s/resource/%s/stats/%s/' % (
+            self.base_api_url, project_slug, resource_slug, language_code
+        )
+        response = requests.get(url, auth=self._auth)
+        
+        if response.status_code != requests.codes['OK']:
+            raise TransifexAPIException(response)
+   
+        return json.loads(response.content)
